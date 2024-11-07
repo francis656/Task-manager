@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: red; color: black; }
+.container { background: blue; padding: 20px; border-radius: 8px; width: 300px; text-align: center; }
+h1 { color: green; }
+input, button { padding: 8px; margin: 5px 0; width: 100%; border: 1px solid #ccc; border-radius: 5px; }
+.task { background: #f9f9f9; padding: 8px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+.task.completed { text-decoration: line-through; color: gray; }
