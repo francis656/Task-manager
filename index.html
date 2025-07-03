@@ -3,42 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookstore Management System</title>
+  <title>📚 Bookstore Management System</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#667eea">
 </head>
 <body>
-  <div class="container">
-    <h1>Bookstore Management System</h1>
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <div class="nav-header">
+      <h1>📚 Bookstore</h1>
+      <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div class="nav-menu" id="navMenu">
+      <a href="#dashboard" class="nav-link active" data-section="dashboard">📊 Dashboard</a>
+      <a href="#books" class="nav-link" data-section="books">📚 Books</a>
+      <a href="#add-book" class="nav-link" data-section="add-book">➕ Add Book</a>
+      <a href="#stats" class="nav-link" data-section="stats">📈 Statistics</a>
+    </div>
+  </nav>
 
-    <!-- Book Form -->
-    <div class="book-form">
-      <h2>Add New Book</h2>
-      <form id="bookForm">
-        <input type="text" id="title" placeholder="Book Title" required>
-        <input type="text" id="author" placeholder="Author" required>
-        <input type="number" id="price" placeholder="Price" step="0.01" min="0" required>
-        <button type="submit">Add Book</button>
+  <div class="container">
+    <header class="header">
+      <h1>📚 Bookstore Management System</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="exportBtn">📤 Export Data</button>
+        <button class="btn btn-primary" id="refreshBtn">🔄 Refresh</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-content">
+            <h3 id="totalBooks">0</h3>
+            <p>Total Books</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <h3 id="totalValue">$0.00</h3>
+            <p>Total Value</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <h3 id="genreCount">0</h3>
+            <p>Genres</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-content">
+            <h3 id="avgPrice">$0.00</h3>
+            <p>Avg. Price</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="recent-books">
+          <h2>📖 Recent Books</h2>
+          <div id="recentBooksList" class="book-cards">
+            <!-- Recent books will be loaded here -->
+          </div>
+        </div>
+        <div class="genre-distribution">
+          <h2>🏷️ Genre Distribution</h2>
+          <div id="genreChart" class="genre-chart">
+            <!-- Genre chart will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Books Section -->
+    <section id="books" class="section">
+      <div class="books-header">
+        <h2>📚 Book Library</h2>
+        <div class="search-filters">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search books, authors, ISBN...">
+            <button id="searchBtn" class="search-btn">Search</button>
+          </div>
+          <div class="filters">
+            <select id="genreFilter">
+              <option value="">All Genres</option>
+            </select>
+            <select id="sortBy">
+              <option value="date_added">Sort by Date Added</option>
+              <option value="title">Sort by Title</option>
+              <option value="author">Sort by Author</option>
+              <option value="price">Sort by Price</option>
+              <option value="quantity">Sort by Quantity</option>
+            </select>
+            <select id="sortOrder">
+              <option value="DESC">Descending</option>
+              <option value="ASC">Ascending</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Table View -->
+      <div class="table-container desktop-only">
+        <table id="booksTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Genre</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookTableBody">
+            <!-- Book rows will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div class="mobile-cards mobile-only">
+        <div id="mobileBooksList">
+          <!-- Mobile book cards will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be loaded here -->
+      </div>
+
+      <!-- Loading Spinner -->
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading books...</p>
+      </div>
+    </section>
+
+    <!-- Add Book Section -->
+    <section id="add-book" class="section">
+      <div class="form-container">
+        <h2>➕ Add New Book</h2>
+        <form id="bookForm" class="book-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="title">📖 Book Title *</label>
+              <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+              <label for="author">👤 Author *</label>
+              <input type="text" id="author" name="author" required>
+            </div>
+            <div class="form-group">
+              <label for="price">💰 Price *</label>
+              <input type="number" id="price" name="price" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="quantity">📊 Quantity</label>
+              <input type="number" id="quantity" name="quantity" min="1" value="1">
+            </div>
+            <div class="form-group">
+              <label for="isbn">🔢 ISBN</label>
+              <input type="text" id="isbn" name="isbn" placeholder="978-0-123456-78-9">
+            </div>
+            <div class="form-group">
+              <label for="genre">🏷️ Genre</label>
+              <input type="text" id="genre" name="genre" placeholder="Fiction, Romance, etc.">
+            </div>
+          </div>
+          <div class="form-group full-width">
+            <label for="description">📝 Description</label>
+            <textarea id="description" name="description" rows="3" placeholder="Brief description of the book..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="reset" class="btn btn-secondary">🗑️ Clear</button>
+            <button type="submit" class="btn btn-primary">➕ Add Book</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="stats" class="section">
+      <h2>📈 Detailed Statistics</h2>
+      <div class="stats-detailed">
+        <div class="stats-section">
+          <h3>📚 Book Statistics</h3>
+          <div id="detailedStats" class="detailed-stats">
+            <!-- Detailed statistics will be loaded here -->
+          </div>
+        </div>
+        <div class="stats-section">
+          <h3>🏷️ Genre Breakdown</h3>
+          <div id="genreBreakdown" class="genre-breakdown">
+            <!-- Genre breakdown will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Edit Book Modal -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✏️ Edit Book</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <form id="editBookForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editTitle">📖 Book Title *</label>
+            <input type="text" id="editTitle" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="editAuthor">👤 Author *</label>
+            <input type="text" id="editAuthor" name="author" required>
+          </div>
+          <div class="form-group">
+            <label for="editPrice">💰 Price *</label>
+            <input type="number" id="editPrice" name="price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="editQuantity">📊 Quantity</label>
+            <input type="number" id="editQuantity" name="quantity" min="1">
+          </div>
+          <div class="form-group">
+            <label for="editIsbn">🔢 ISBN</label>
+            <input type="text" id="editIsbn" name="isbn">
+          </div>
+          <div class="form-group">
+            <label for="editGenre">🏷️ Genre</label>
+            <input type="text" id="editGenre" name="genre">
+          </div>
+        </div>
+        <div class="form-group full-width">
+          <label for="editDescription">📝 Description</label>
+          <textarea id="editDescription" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+        </div>
       </form>
     </div>
-
-    <!-- Book List -->
-    <div class="book-list">
-      <h2>Book List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Price</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="bookTableBody">
-          <!-- Dynamic Content -->
-        </tbody>
-      </table>
-    </div>
   </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="script.js"></script>
 </body>
